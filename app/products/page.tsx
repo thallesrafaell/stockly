@@ -1,9 +1,31 @@
-export default function ProductsPage() {
- return (
-   <div>
-      <h1 className="text-2xl font-bold">Products Page</h1>
-      <p className="mt-4">This is the products page where you can manage your products.</p>
-      {/* Add more content or components related to products here */} 
-   </div>
- );
+import { PlusIcon } from "lucide-react";
+import { Button } from "../_components/ui/button";
+import { DataTable } from "../_components/ui/dataTable";
+import { db } from "../_lib/prisma";
+import { productsTableColumns } from "./_components/tableColumn";
+
+async function ProductsPage() {
+  const products = await db.product.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+
+  return (
+    <div className="w-full space-y-8 mx-8  rounded-lg my-8 p-8 bg-white">
+      <div className="flex w-full items-center justify-between">
+        <div className="space-y-1">
+          <span className="text-xs font-semibold text-slate-500">
+            Gestão de Produtos
+          </span>
+          <h2 className="text-xl font-bold">Produtos</h2>
+        </div>
+        <Button className="cursor-pointer">
+          <PlusIcon size={20} />
+          Adicionar Produto
+        </Button>
+      </div>
+      <DataTable columns={productsTableColumns} data={products} />
+    </div>
+  );
 }
+
+export default ProductsPage;
