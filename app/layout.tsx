@@ -1,6 +1,6 @@
+import SideBar from "@/app/_components/sideBar";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import SideBar from "./_component/sideBar";
 import "./globals.css";
 
 const geistSans = Inter({
