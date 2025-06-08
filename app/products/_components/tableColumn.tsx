@@ -26,6 +26,7 @@ import {
 import ComponentDeleteDialog from "./componentDeleteDiolog";
 import UpsertProductDialog from "./upSertProductDialog";
 import { useState } from "react";
+import { NumericFormat } from "react-number-format";
 
 
 const getStatusLabel = (status: string) => {
@@ -49,6 +50,20 @@ export const productsTableColumns: ColumnDef<Product>[] = [
   {
     accessorKey: "price",
     header: "Valor Unitário",
+    cell: ({ row }) => {
+      const product = row.original;
+      return (
+        <NumericFormat
+          value={Number(product.price)}
+          displayType="text"
+          thousandSeparator="."
+          decimalSeparator=","
+          prefix="R$ "
+          fixedDecimalScale
+          decimalScale={2}
+        />
+      );
+    },
   },
   {
     accessorKey: "stock",
