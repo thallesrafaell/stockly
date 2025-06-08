@@ -1,33 +1,11 @@
 "use client";
 
-import { AlertDialogTrigger } from "@/app/_components/ui/alert-dialog";
 import { Badge } from "@/app/_components/ui/badge";
-import { Button } from "@/app/_components/ui/button";
-import { Dialog, DialogTrigger } from "@/app/_components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/app/_components/ui/dropdown-menu";
 import { Product } from "@/app/generated/prisma";
-import { AlertDialog } from "@radix-ui/react-alert-dialog";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  CircleAlertIcon,
-  CircleCheckIcon,
-  ClipboardCopyIcon,
-  EditIcon,
-  MoreHorizontalIcon,
-  TrashIcon,
-} from "lucide-react";
-import ComponentDeleteDialog from "./componentDeleteDiolog";
-import UpsertProductDialog from "./upSertProductDialog";
-import { useState } from "react";
+import { CircleAlertIcon, CircleCheckIcon } from "lucide-react";
 import { NumericFormat } from "react-number-format";
-
+import ProductsDropDownMenu from "./productsDropDownMenu";
 
 const getStatusLabel = (status: string) => {
   switch (status) {
@@ -95,54 +73,8 @@ export const productsTableColumns: ColumnDef<Product>[] = [
     header: "Ações",
 
     cell: ({ row }) => {
-      const [editingDialogOpen, setEditingDialogOpen] = useState(false);
       const product = row.original;
-      return (
-        <AlertDialog>
-          <Dialog open={editingDialogOpen} onOpenChange={setEditingDialogOpen}>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="cursor-pointer p-1 hover:bg-transparent"
-                >
-                  <MoreHorizontalIcon size={16} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer gap-1.5">
-                  <ClipboardCopyIcon size={16} /> Copiar ID
-                </DropdownMenuItem>
-                <DialogTrigger asChild>
-                  <DropdownMenuItem className="cursor-pointer gap-1.5">
-                    <EditIcon size={16} />
-                    Editar
-                  </DropdownMenuItem>
-                </DialogTrigger>
-
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem className="cursor-pointer gap-1.5 text-red-500">
-                    <TrashIcon color="red" size={16} />
-                    Excluir
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <UpsertProductDialog
-              defaultValues={{
-                id: product.id,
-                name: product.name,
-                price: Number(product.price),
-                stock: product.stock,
-              }}
-              onSuccess={() => setEditingDialogOpen(false)}
-            />
-            <ComponentDeleteDialog id={product.id} />
-          </Dialog>
-        </AlertDialog>
-      );
+      return <ProductsDropDownMenu product={product} />;
     },
   },
 ];
