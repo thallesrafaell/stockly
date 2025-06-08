@@ -1,9 +1,11 @@
 "use client";
 
 import { Badge } from "@/app/_components/ui/badge";
+import { Button } from "@/app/_components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/app/_components/ui/dropdown-menu";
 import { Product } from "@/app/generated/prisma";
 import { ColumnDef } from "@tanstack/react-table";
-import { CircleAlertIcon, CircleCheckIcon } from "lucide-react";
+import { CircleAlertIcon, CircleCheckIcon, ClipboardCopyIcon, EditIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -47,5 +49,33 @@ export const productsTableColumns: ColumnDef<Product>[] = [
       </Badge>)
 
     }
-  }
+  },
+  {
+    accessorKey: "actions",
+    header: "Ações",
+
+    cell: ({ row }) => { 
+      const product = row.original;
+      return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost"className="cursor-pointer p-1 hover:bg-transparent">
+                  <MoreHorizontalIcon size={16}/>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent> 
+              <DropdownMenuLabel>Ações</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="gap-1.5 cursor-pointer"><ClipboardCopyIcon size={16}/> Copiar ID</DropdownMenuItem>
+              <DropdownMenuItem className="gap-1.5 cursor-pointer"><EditIcon size={16}/>Editar</DropdownMenuItem>
+              <DropdownMenuItem className="gap-1.5 cursor-pointer text-red-500"><TrashIcon color="red" size={16} />
+                Excluir
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      }
+    }
+  
 ];
+

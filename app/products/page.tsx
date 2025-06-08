@@ -1,10 +1,10 @@
 import { DataTable } from "../_components/ui/dataTable";
-import { getProducts } from "../_data-access/products/getProducts";
+import { cacheGetProducts } from "../_data-access/products/getProducts";
 import AddProductButton from "./_components/createProductButton";
 import { productsTableColumns } from "./_components/tableColumn";
 
 async function ProductsPage() {
-  const products = await getProducts();
+  const products = await cacheGetProducts();
   // const res = await fetch("http://localhost:3000/api/products");
   // const products = await res.json();
 

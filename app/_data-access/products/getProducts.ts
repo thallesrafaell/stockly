@@ -1,4 +1,5 @@
 import { db } from "@/app/_lib/prisma";
+import { unstable_cache } from "next/cache";
 import "server-only";
 
 export const getProducts = async () => {
@@ -7,4 +8,9 @@ export const getProducts = async () => {
   });
 
   return products;
- }
+}
+ 
+export const cacheGetProducts = unstable_cache(getProducts, ["getProducts"], {
+  tags: ["get-products"],
+  revalidate: 60, // Revalidate every 60 seconds
+})
