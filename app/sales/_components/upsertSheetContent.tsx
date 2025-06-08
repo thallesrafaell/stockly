@@ -73,26 +73,44 @@ const UpsertSheetContent = ({
       quantity: 1,
     },
   });
-
   const onSubmit = (data: FormSchema) => {
-    console.log("Form submitted with data:", data);
-
     const selectedProductData = products.find(
       (product) => product.id === data.productId,
     );
+
     if (!selectedProductData) {
       toast.error("Produto não encontrado");
       return;
     }
+
+    // Verifica o estoque antes de qualquer adição
+    if (data.quantity > selectedProductData.stock) {
+      toast.error("Quantidade excede o estoque disponível");
+      form.setError("quantity", {
+        message: "Quantidade excede o estoque disponível",
+      });
+      return;
+    }
+
     setSelectedProduct((prev) => {
       const existingProduct = prev.find(
         (product) => product.id === data.productId,
       );
 
+      // Verifica o estoque total considerando quantidade existente
       if (existingProduct) {
+        const totalQuantity = existingProduct.quantity + data.quantity;
+        if (totalQuantity > selectedProductData.stock) {
+          toast.error("Quantidade excede o estoque disponível");
+          form.setError("quantity", {
+            message: "Quantidade excede o estoque disponível",
+          });
+          return prev;
+        }
+
         return prev.map((product) =>
           product.id === data.productId
-            ? { ...product, quantity: product.quantity + data.quantity }
+            ? { ...product, quantity: totalQuantity }
             : product,
         );
       }
@@ -115,9 +133,7 @@ const UpsertSheetContent = ({
   };
 
   const onDeleteProduct = (id: string) => {
-    setSelectedProduct((prev) =>
-      prev.filter((product) => product.id !== id),
-    );
+    setSelectedProduct((prev) => prev.filter((product) => product.id !== id));
     toast.success("Produto removido com sucesso");
   };
   const onEditProduct = (id: string) => {
@@ -128,9 +144,7 @@ const UpsertSheetContent = ({
     }
     form.setValue("productId", productToEdit.id);
     form.setValue("quantity", productToEdit.quantity);
-    setSelectedProduct((prev) =>
-      prev.filter((product) => product.id !== id),
-    );
+    setSelectedProduct((prev) => prev.filter((product) => product.id !== id));
     toast.success("Produto selecionado para edição");
   };
 
@@ -212,7 +226,11 @@ const UpsertSheetContent = ({
                 {formatCurrency(product.price * product.quantity)}
               </TableCell>
               <TableCell>
-                <TableSaleDropdownMenu product={{ id: product.id }} onDelete={onDeleteProduct} onEdit={onEditProduct} />
+                <TableSaleDropdownMenu
+                  product={{ id: product.id }}
+                  onDelete={onDeleteProduct}
+                  onEdit={onEditProduct}
+                />
               </TableCell>
             </TableRow>
           ))}
