@@ -1,7 +1,9 @@
 import SideBar from "@/app/_components/sideBar";
+import { Toaster } from "@/app/_components/ui/sonner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+
 
 const geistSans = Inter({
   subsets: ["latin"],
@@ -25,6 +27,7 @@ export default function RootLayout({
         <div className="flex h-full">
           <SideBar />
           {children}
+          <Toaster  position="top-right"  richColors theme="light"/>
         </div>
       </body>
     </html>
