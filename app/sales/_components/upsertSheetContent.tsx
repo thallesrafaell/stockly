@@ -34,6 +34,7 @@ import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import TableSaleDropdownMenu from "./tableSaleDropdownMenu";
 
 const formSchema = z.object({
   productId: z.string().uuid().min(1, "Selecione um produto"),
@@ -113,6 +114,26 @@ const UpsertSheetContent = ({
     form.reset();
   };
 
+  const onDeleteProduct = (id: string) => {
+    setSelectedProduct((prev) =>
+      prev.filter((product) => product.id !== id),
+    );
+    toast.success("Produto removido com sucesso");
+  };
+  const onEditProduct = (id: string) => {
+    const productToEdit = selectedProduct.find((product) => product.id === id);
+    if (!productToEdit) {
+      toast.error("Produto não encontrado");
+      return;
+    }
+    form.setValue("productId", productToEdit.id);
+    form.setValue("quantity", productToEdit.quantity);
+    setSelectedProduct((prev) =>
+      prev.filter((product) => product.id !== id),
+    );
+    toast.success("Produto selecionado para edição");
+  };
+
   const totalPriceProducts = useMemo(() => {
     return selectedProduct.reduce(
       (total, product) => total + product.price * product.quantity,
@@ -189,6 +210,9 @@ const UpsertSheetContent = ({
               <TableCell>{formatCurrency(product.price)}</TableCell>
               <TableCell>
                 {formatCurrency(product.price * product.quantity)}
+              </TableCell>
+              <TableCell>
+                <TableSaleDropdownMenu product={{ id: product.id }} onDelete={onDeleteProduct} onEdit={onEditProduct} />
               </TableCell>
             </TableRow>
           ))}
