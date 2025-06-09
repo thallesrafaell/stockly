@@ -1,4 +1,5 @@
 "use client";
+import { createSaleAction } from "@/app/_actions/sale/createSale";
 import { Combobox, ComboboxOption } from "@/app/_components/ui/comobobox";
 import {
   Form,
@@ -12,6 +13,7 @@ import { Input } from "@/app/_components/ui/input";
 import {
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/app/_components/ui/sheet";
@@ -29,7 +31,7 @@ import { formatCurrency } from "@/app/_helpers/currency";
 import { Product } from "@/app/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusIcon } from "lucide-react";
+import { CheckCheckIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -50,6 +52,7 @@ type FormSchema = z.infer<typeof formSchema>;
 interface UpsertSheetContentProps {
   products: Product[];
   productsOption: ComboboxOption[];
+  onSubmitSuccess: () => void;
 }
 
 interface SelectedProducts {
@@ -62,6 +65,7 @@ interface SelectedProducts {
 const UpsertSheetContent = ({
   productsOption,
   products,
+  onSubmitSuccess,
 }: UpsertSheetContentProps) => {
   const [selectedProduct, setSelectedProduct] = useState<SelectedProducts[]>(
     [],
@@ -146,6 +150,29 @@ const UpsertSheetContent = ({
     form.setValue("quantity", productToEdit.quantity);
     setSelectedProduct((prev) => prev.filter((product) => product.id !== id));
     toast.success("Produto selecionado para edição");
+  };
+
+  const onSubmitSale = async () => {
+    try {
+      await createSaleAction({
+        products: selectedProduct.map((product) => ({
+          id: product.id,
+          quantity: product.quantity,
+        })),
+      });
+      toast.success("Venda criada com sucesso");
+      onSubmitSuccess();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((err) => {
+          toast.error(err.message);
+        });
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao criar venda");
+      }
+    }
   };
 
   const totalPriceProducts = useMemo(() => {
@@ -242,6 +269,17 @@ const UpsertSheetContent = ({
           </TableRow>
         </TableFooter>
       </Table>
+      <SheetFooter>
+        <Button
+          className="mt-4 w-full cursor-pointer gap-2"
+          disabled={selectedProduct.length === 0 || form.formState.isSubmitting}
+          type="submit"
+          onClick={onSubmitSale}
+        >
+          <CheckCheckIcon size={20} />
+          Finalizar Venda
+        </Button>
+      </SheetFooter>
     </SheetContent>
   );
 };

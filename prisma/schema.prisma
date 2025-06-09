@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../app/generated/prisma"
@@ -15,39 +9,37 @@ datasource db {
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String        @id @default(uuid())
   name        String
-  price       Decimal @db.Decimal(10, 2)
+  price       Decimal       @db.Decimal(10, 2)
   stock       Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  SaleProduct SaleProduct[]
 
   @@map("products")
-  SaleProduct SaleProduct[]
 }
 
-model Sale{
-  id          String   @id @default(uuid())
-  darwerId   DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+model Sale {
+  id          String        @id @default(uuid())
+  date        DateTime
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  SaleProduct SaleProduct[]
 
   @@map("sales")
-  SaleProduct SaleProduct[]
 }
 
 model SaleProduct {
-  id          String   @id @default(uuid())
-  saleId      String
-  productId   String
-  unitPrice  Decimal @db.Decimal(10, 2)
-  quantity    Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  sale        Sale   @relation(fields: [saleId], references: [id])
-  product     Product  @relation(fields: [productId], references: [id])
+  id        String   @id @default(uuid())
+  saleId    String
+  productId String
+  unitPrice Decimal  @db.Decimal(10, 2)
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sale      Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@map("sale_products")
 }

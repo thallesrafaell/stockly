@@ -1,9 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { ComboboxOption } from "../_components/ui/comobobox";
-import { ScrollArea } from "../_components/ui/scroll-area";
-import { Sheet, SheetTrigger } from "../_components/ui/sheet";
 import { cacheGetProducts } from "../_data-access/products/getProducts";
-import UpsertSheetContent from "./_components/upsertSheetContent";
+import CreateSaleButton from "./_components/createSaleButton";
 
 export default async function SalesPage() {
   const products = await cacheGetProducts();
@@ -22,19 +19,8 @@ export default async function SalesPage() {
           </span>
           <h2 className="text-xl font-bold">Vendas</h2>
         </div>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button className="cursor-pointer">Nova venda</Button>
-          </SheetTrigger>
-          <UpsertSheetContent products={products} productsOption={productOptions} />
-        </Sheet>
+        <CreateSaleButton products={products} productsOption={productOptions} />
       </div>
-      <ScrollArea className="h-11/12 w-full">
-        {/* <DataTable
-          columns={productsTableColumns}
-          data={JSON.parse(JSON.stringify(products))}
-        /> */}
-      </ScrollArea>
     </div>
   );
 }
