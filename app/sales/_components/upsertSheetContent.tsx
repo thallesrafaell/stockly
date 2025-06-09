@@ -32,6 +32,8 @@ import { Product } from "@/app/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCheckIcon, PlusIcon } from "lucide-react";
+import { flattenValidationErrors } from "next-safe-action";
+import { useAction } from "next-safe-action/hooks";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -67,6 +69,12 @@ const UpsertSheetContent = ({
   products,
   onSubmitSuccess,
 }: UpsertSheetContentProps) => {
+  const { execute: executeCreateSale } = useAction(createSaleAction, {
+    onError: ({ error: { validationErrors, serverError } }) => {
+      const flattenedError = flattenValidationErrors(validationErrors);
+      toast.error(serverError ?? flattenedError.formErrors[0]);
+    },
+  });
   const [selectedProduct, setSelectedProduct] = useState<SelectedProducts[]>(
     [],
   );
@@ -153,26 +161,13 @@ const UpsertSheetContent = ({
   };
 
   const onSubmitSale = async () => {
-    try {
-      await createSaleAction({
-        products: selectedProduct.map((product) => ({
-          id: product.id,
-          quantity: product.quantity,
-        })),
-      });
-      toast.success("Venda criada com sucesso");
-      onSubmitSuccess();
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        error.errors.forEach((err) => {
-          toast.error(err.message);
-        });
-      } else if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Erro ao criar venda");
-      }
-    }
+    await executeCreateSale({
+      products: selectedProduct.map((product) => ({
+        id: product.id,
+        quantity: product.quantity,
+      })),
+    });
+    onSubmitSuccess();
   };
 
   const totalPriceProducts = useMemo(() => {
