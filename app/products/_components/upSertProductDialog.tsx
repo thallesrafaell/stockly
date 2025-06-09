@@ -1,9 +1,9 @@
 "use client";
-import { upsertProduct } from "@/app/_actions/products/upsertProducts/upsertProducts";
 import {
   UpsertProductFormData,
   upsertProductSchema,
 } from "@/app/_actions/products/upsertProducts/schema";
+import { upsertProduct } from "@/app/_actions/products/upsertProducts/upsertProducts";
 import { Button } from "@/app/_components/ui/button";
 import {
   DialogClose,
@@ -24,6 +24,8 @@ import {
 import { Input } from "@/app/_components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { flattenValidationErrors } from "next-safe-action";
+import { useAction } from "next-safe-action/hooks";
 import { useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
@@ -37,6 +39,13 @@ const UpsertProductDialog = ({
   onSuccess,
   defaultValues,
 }: UpsertProductDialogProps) => {
+  const { execute: executeUpsertProduct } = useAction(upsertProduct, {
+    onError: ({ error: { validationErrors, serverError } }) => {
+      const flattenedErrors = flattenValidationErrors(validationErrors);
+      toast.error(serverError ?? flattenedErrors.formErrors[0]);
+    },
+  });
+
   const form = useForm<UpsertProductFormData>({
     resolver: zodResolver(upsertProductSchema),
     defaultValues: defaultValues ?? {
@@ -47,14 +56,9 @@ const UpsertProductDialog = ({
   });
 
   const onSubmit = async (data: UpsertProductFormData) => {
-    try {
-      await upsertProduct(data);
-      toast.success("Produto criado com sucesso!");
-      onSuccess?.();
-    } catch (error) {
-      console.error("Error creating product:", error);
-      toast.error("Erro ao criar produto, tente novamente.");
-    }
+    await executeUpsertProduct(data);
+    toast.success("Produto criado com sucesso!");
+    onSuccess?.();
   };
 
   const isEditing = !!defaultValues;
