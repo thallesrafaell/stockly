@@ -22,7 +22,11 @@ interface TableSaleDropdownMenuProps {
   onEdit: (id: string) => void;
 }
 
-const TableSaleDropdownMenu = ({ product, onDelete, onEdit }: TableSaleDropdownMenuProps) => {
+const UpsertTableSaleDropdownMenu = ({
+  product,
+  onDelete,
+  onEdit,
+}: TableSaleDropdownMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -45,12 +49,18 @@ const TableSaleDropdownMenu = ({ product, onDelete, onEdit }: TableSaleDropdownM
         >
           <ClipboardCopyIcon size={16} /> Copiar ID
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer gap-1.5" onClick={() => onEdit(product.id)}>
+        <DropdownMenuItem
+          className="cursor-pointer gap-1.5"
+          onClick={() => onEdit(product.id)}
+        >
           <EditIcon size={16} />
           Editar
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="cursor-pointer gap-1.5 text-red-500" onClick={() => onDelete(product.id)}>
+        <DropdownMenuItem
+          className="cursor-pointer gap-1.5 text-red-500"
+          onClick={() => onDelete(product.id)}
+        >
           <TrashIcon color="red" size={16} />
           Excluir
         </DropdownMenuItem>
@@ -58,4 +68,4 @@ const TableSaleDropdownMenu = ({ product, onDelete, onEdit }: TableSaleDropdownM
     </DropdownMenu>
   );
 };
-export default TableSaleDropdownMenu;
+export default UpsertTableSaleDropdownMenu;
