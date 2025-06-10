@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/app/_components/ui/badge";
-import { Product } from "@/app/generated/prisma";
+import { ProductDto } from "@/app/_data-access/products/getProducts";
 import { ColumnDef } from "@tanstack/react-table";
 import { CircleAlertIcon, CircleCheckIcon } from "lucide-react";
 import { NumericFormat } from "react-number-format";
@@ -20,7 +20,7 @@ const getStatusLabel = (status: string) => {
   }
 };
 
-export const productsTableColumns: ColumnDef<Product>[] = [
+export const productsTableColumns: ColumnDef<ProductDto>[] = [
   {
     accessorKey: "name",
     header: "Nome",
