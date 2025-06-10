@@ -140,7 +140,7 @@ const UpsertSheetContent = ({
         },
       ];
     });
-
+    toast.success("Produto adicionado com sucesso");
     form.reset();
   };
 
@@ -167,7 +167,9 @@ const UpsertSheetContent = ({
         quantity: product.quantity,
       })),
     });
+    toast.success("Venda finalizada com sucesso!");
     onSubmitSuccess();
+    setSelectedProduct([]);
   };
 
   const totalPriceProducts = useMemo(() => {
