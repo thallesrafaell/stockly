@@ -1,9 +1,8 @@
 import { ComboboxOption } from "../_components/ui/comobobox";
-import { DataTable } from "../_components/ui/dataTable";
 import { cacheGetProducts } from "../_data-access/products/getProducts";
 import { getSales } from "../_data-access/sale/getSales";
 import CreateSaleButton from "./_components/createSaleButton";
-import { saleTableColumns } from "./_components/table-columns";
+import { SalesDataTable } from "./_components/SalesDataTable";
 
 export default async function SalesPage() {
   const products = await cacheGetProducts();
@@ -25,7 +24,11 @@ export default async function SalesPage() {
         </div>
         <CreateSaleButton products={products} productsOption={productOptions} />
       </div>
-      <DataTable columns={saleTableColumns} data={salesData} />
+      <SalesDataTable
+        salesData={salesData}
+        products={products}
+        productOptions={productOptions}
+      />
     </div>
   );
 }

@@ -1,11 +1,15 @@
 "use client";
+import { ComboboxOption } from "@/app/_components/ui/comobobox";
+import { ProductDto } from "@/app/_data-access/products/getProducts";
 import { salesDto } from "@/app/_data-access/sale/getSales";
 import { formatCurrency } from "@/app/_helpers/currency";
-import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontalIcon } from "lucide-react";
+import SalesTableDropdownMenu from "./saleTableDropDownMenu";
 
-export const saleTableColumns: ColumnDef<salesDto>[] = [
+export const saleTableColumns = (
+  products: ProductDto[],
+  productOptions: ComboboxOption[],
+): ColumnDef<salesDto>[] => [
   {
     accessorKey: "productsName",
     header: "Produtos",
@@ -36,10 +40,15 @@ export const saleTableColumns: ColumnDef<salesDto>[] = [
   },
   {
     header: "Ações",
-    cell: () => (
-      <Button variant="ghost">
-        <MoreHorizontalIcon size={16} />
-      </Button>
-    ),
+    cell: ({ row }) => {
+      const sale = row.original;
+      return (
+        <SalesTableDropdownMenu
+          sale={sale}
+          products={products}
+          productOptions={productOptions}
+        />
+      );
+    },
   },
 ];
