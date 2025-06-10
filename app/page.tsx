@@ -1,12 +1,26 @@
+import {
+  Header,
+  HeaderLeft,
+  HeaderRight,
+  HeaderSubtitle,
+  HeaderTitle,
+} from "./_components/header";
+import { Button } from "./_components/ui/button";
+
 export default function Home() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Dashboard Page</h1>
-      <p className="mt-4">
-        This is the dashboard page where you can view your analytics and
-        reports.
-      </p>
-      {/* Add more content or components related to the dashboard here */}
+    <div className="mx-8 my-8 w-full space-y-8 rounded-lg bg-white p-8">
+      <Header>
+        <HeaderLeft>
+          <HeaderSubtitle>Dashboard</HeaderSubtitle>
+          <HeaderTitle>Dashboard</HeaderTitle>
+        </HeaderLeft>
+        <HeaderRight>
+          <Button variant="outline" className="h-8 px-4">
+            Criar Novo
+          </Button>
+        </HeaderRight>
+      </Header>
     </div>
   );
 }

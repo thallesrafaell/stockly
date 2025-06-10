@@ -1,3 +1,10 @@
+import {
+  Header,
+  HeaderLeft,
+  HeaderRight,
+  HeaderSubtitle,
+  HeaderTitle,
+} from "../_components/header";
 import { DataTable } from "../_components/ui/dataTable";
 import { ScrollArea } from "../_components/ui/scroll-area";
 import { cacheGetProducts } from "../_data-access/products/getProducts";
@@ -11,15 +18,15 @@ async function ProductsPage() {
 
   return (
     <div className="mx-8 my-8 w-full space-y-8 rounded-lg bg-white p-8">
-      <div className="flex w-full items-center justify-between">
-        <div className="space-y-1">
-          <span className="text-xs font-semibold text-slate-500">
-            Gestão de Produtos
-          </span>
-          <h2 className="text-xl font-bold">Produtos</h2>
-        </div>
-        <AddProductButton />
-      </div>
+      <Header>
+        <HeaderLeft>
+          <HeaderSubtitle>Gestão de Produtos</HeaderSubtitle>
+          <HeaderTitle>Produtos</HeaderTitle>
+        </HeaderLeft>
+        <HeaderRight>
+          <AddProductButton />
+        </HeaderRight>
+      </Header>
       <ScrollArea className="h-11/12 w-full">
         <DataTable
           columns={productsTableColumns}
