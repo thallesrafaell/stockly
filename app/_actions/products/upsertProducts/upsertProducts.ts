@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/app/_lib/prisma";
 import { actionClient } from "@/app/_lib/utils/safe-action";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { UpsertProductFormData, upsertProductSchema } from "./schema";
 
 export const upsertProduct = actionClient
@@ -18,5 +18,6 @@ const upsertProductAction = async (data: UpsertProductFormData) => {
     update: data,
   });
 
-  revalidateTag("get-products"); // Revalidate the cache for get-products
+  revalidateTag("get-products");
+  revalidatePath("/"); // Revalidate the cache for get-products
 };

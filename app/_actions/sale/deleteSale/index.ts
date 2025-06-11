@@ -54,7 +54,7 @@ export const deleteSaleAction = async ({ id }: DeleteSaleFormData) => {
       }
 
       revalidatePath("/sales");
-      revalidatePath("/dashboard");
+      revalidatePath("/");
       revalidatePath("/products");
 
       console.info(`[deleteSaleAction] Path /sales revalidated.`);
