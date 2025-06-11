@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/app/_lib/prisma";
 import { actionClient } from "@/app/_lib/utils/safe-action";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { upsertSaleSchema } from "./upsertSaleSchema";
 
 export const upsertSaleAction = actionClient
@@ -106,16 +106,15 @@ export const upsertSaleAction = actionClient
           }
         }
 
-        revalidateTag("get-sales");
+        revalidatePath("/sales");
         revalidateTag("get-products");
+        revalidatePath("/");
         return { saleId: sale.id }; // Retornar o ID da venda em caso de sucesso
       });
       return result; // Retornar o resultado da transação
     } catch (error) {
       console.error("Erro na upsertSaleAction:", error);
-      // Não é mais necessário verificar Prisma.PrismaClientKnownRequestError aqui se os erros são lançados
-      // O safe-action tratará o erro lançado e o colocará em `serverError`.
-      // Apenas retornamos um objeto de erro genérico se algo inesperado ocorrer fora da transação.
+
       return {
         error:
           error instanceof Error ? error.message : "Erro ao processar a venda.",

@@ -9,30 +9,56 @@ export const deleteSale = actionClient
   .action(async ({ parsedInput: { id } }) => {
     console.log("[Action deleteSale] Triggered with id:", id);
     await deleteSaleAction({ id });
-    // Se deleteSaleAction lançar um erro, ele será propagado
-    // e capturado pelo next-safe-action, acionando o onError no cliente.
-    // Se for bem-sucedido, o onSuccess será acionado.
   });
 
 export const deleteSaleAction = async ({ id }: DeleteSaleFormData) => {
-  // A validação do schema já é feita pelo actionClient.inputSchema,
-  // então a linha abaixo é redundante.
-  // deleteSaleSchema.parse({ id });
-
-  console.log(`[deleteSaleAction] Attempting to delete sale with id: ${id}`);
-
   try {
-    await db.sale.delete({
-      where: {
-        id,
-      },
-    });
-    console.log(
-      `[deleteSaleAction] Sale with id: ${id} deleted successfully from DB.`,
-    );
+    await db.$transaction(async (tx) => {
+      const sale = await tx.sale.findUnique({
+        include: {
+          SaleProduct: true,
+        },
+        where: {
+          id,
+        },
+      });
 
-    revalidatePath("/sales");
-    console.log(`[deleteSaleAction] Path /sales revalidated.`);
+      if (!sale) {
+        console.error(`[deleteSaleAction] Sale with id: ${id} not found.`);
+        throw new Error(`Sale with id: ${id} not found.`);
+      }
+
+      await tx.sale.delete({
+        where: {
+          id,
+        },
+      });
+      console.info(
+        `[deleteSaleAction] Sale with id: ${id} deleted successfully from DB.`,
+      );
+
+      for (const saleProduct of sale.SaleProduct) {
+        await tx.product.update({
+          where: {
+            id: saleProduct.productId,
+          },
+          data: {
+            stock: {
+              increment: saleProduct.quantity,
+            },
+          },
+        });
+        console.info(
+          `[deleteSaleAction] Product with id: ${saleProduct.productId} stock updated successfully.`,
+        );
+      }
+
+      revalidatePath("/sales");
+      revalidatePath("/dashboard");
+      revalidatePath("/products");
+
+      console.info(`[deleteSaleAction] Path /sales revalidated.`);
+    });
   } catch (error) {
     console.error(
       `[deleteSaleAction] Error deleting sale with id ${id}:`,

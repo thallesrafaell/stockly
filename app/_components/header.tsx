@@ -25,7 +25,7 @@ export const Header = ({
 }) => {
   return (
     <div className={`flex w-full items-center justify-between ${className}`}>
-      {children}s
+      {children}
     </div>
   );
 };

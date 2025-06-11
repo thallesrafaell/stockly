@@ -1,15 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
+@tailwind utilities;
 @custom-variant dark (&:is(.dark *));
 
 body,
 html {
-  @apply bg-gray-100 text-gray-900 font-sans h-full;
+  @apply h-full bg-gray-100 font-sans text-gray-900;
 }
 
 @theme inline {
-
   --radius-sm: calc(var(--radius) - 4px);
 
   --radius-md: calc(var(--radius) - 2px);
@@ -149,7 +148,6 @@ html {
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.527 0.154 150.069);
 }
-
 
 @layer base {
   * {
