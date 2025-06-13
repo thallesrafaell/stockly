@@ -1,4 +1,3 @@
-import { ShoppingBasketIcon } from "lucide-react";
 import { Suspense } from "react";
 import {
   Header,
@@ -6,25 +5,16 @@ import {
   HeaderSubtitle,
   HeaderTitle,
 } from "../_components/header";
-import { getDashboard } from "../_data-access/dashboard/getDashboard";
-import MostSoldProductItem from "./component/mostSoldProductsItem";
-import RevenueChart from "./component/revenueChars";
-import {
-  SummaryCard,
-  SummaryCardIcon,
-  SummaryCardSkeleton,
-  SummaryCardTitle,
-  SummaryCardValue,
-} from "./component/summaryCard";
+import LastSalesChart from "./component/lastSalesChart";
+import MostSoldProductsCard from "./component/mostSoldProductsCard";
+import { SummaryCardSkeleton } from "./component/summaryCard";
 import TodayRevenueCard from "./component/todayRevenueCard";
+import TotalProducts from "./component/totalProducts";
 import TotalRevenueCard from "./component/totalRevenueCard";
 import TotalSales from "./component/totalSales";
 import { TotalStock } from "./component/totalStock";
 
 export default async function Home() {
-  const { totalProducts, totalLast14DaysRevenue, mostSoldProducts } =
-    await getDashboard();
-
   return (
     <div className="m-8 flex w-full flex-col space-y-8 rounded-lg">
       <Header>
@@ -50,30 +40,37 @@ export default async function Home() {
         <Suspense fallback={<SummaryCardSkeleton />}>
           <TotalStock />
         </Suspense>
-        <SummaryCard>
-          <SummaryCardIcon>
-            <ShoppingBasketIcon size={24} className="text-primary" />
-          </SummaryCardIcon>
-          <SummaryCardTitle>Total em Produtos</SummaryCardTitle>
-          <SummaryCardValue>{totalProducts}</SummaryCardValue>
-        </SummaryCard>
+        <Suspense fallback={<SummaryCardSkeleton />}>
+          <TotalProducts />
+        </Suspense>
       </div>
       <div className="grid min-h-0 grid-cols-[2.5fr_1fr] gap-6">
-        <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white p-6">
-          <p className="text-lg font-semibold text-slate-900">Receita</p>
-          <p className="text-sm text-slate-400">Últimos 14 dias</p>
-          <RevenueChart data={totalLast14DaysRevenue ?? []} />
-        </div>
-        <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white">
-          <p className="p-6 text-lg font-semibold text-slate-900">
-            Produtos mais vendidos
-          </p>
-          <div className="space-y-8 overflow-y-auto px-6 pb-6">
-            {mostSoldProducts?.map((product) => (
-              <MostSoldProductItem key={product.productId} product={product} />
-            ))}
-          </div>
-        </div>
+        <Suspense
+          fallback={
+            <div className="rounded-xl bg-white p-6">
+              <div className="space-y-2">
+                <div className="h-5 w-20 animate-pulse rounded-md bg-slate-200" />
+                <div className="h-[24px] w-36 animate-pulse rounded-md bg-slate-200" />
+                <div className="h-[300px] w-full animate-pulse rounded-md bg-slate-200" />
+              </div>
+            </div>
+          }
+        >
+          <LastSalesChart />
+        </Suspense>
+        <Suspense
+          fallback={
+            <div className="rounded-xl bg-white p-6">
+              <div className="space-y-2">
+                <div className="h-5 w-20 animate-pulse rounded-md bg-slate-200" />
+                <div className="h-[24px] w-36 animate-pulse rounded-md bg-slate-200" />
+                <div className="h-[300px] w-full animate-pulse rounded-md bg-slate-200" />
+              </div>
+            </div>
+          }
+        >
+          <MostSoldProductsCard />
+        </Suspense>
       </div>
     </div>
   );
