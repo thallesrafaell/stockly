@@ -26,8 +26,18 @@ export const SummaryCardValue = ({
   return <p className="text-2xl font-bold text-slate-900">{children}</p>;
 };
 
-const SummaryCard = ({ children }: { children: React.ReactNode }) => {
+export const SummaryCard = ({ children }: { children: React.ReactNode }) => {
   return <div className="rounded-xl bg-white p-6">{children}</div>;
 };
 
-export default SummaryCard;
+export const SummaryCardSkeleton = () => {
+  return (
+    <div className="rounded-xl bg-white p-6">
+      <div className="space-y-2">
+        <div className="h-9 w-9 animate-pulse rounded-md bg-slate-200" />
+        <div className="h-5 w-20 animate-pulse rounded-md bg-slate-200" />
+        <div className="h-[24px] w-36 animate-pulse rounded-md bg-slate-200" />
+      </div>
+    </div>
+  );
+};

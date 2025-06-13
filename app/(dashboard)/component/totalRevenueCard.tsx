@@ -1,7 +1,8 @@
 import { getTotalRevenue } from "@/app/_data-access/dashboard/getTotalRevenue";
 import { formatCurrency } from "@/app/_helpers/currency";
 import { DollarSignIcon } from "lucide-react";
-import SummaryCard, {
+import {
+  SummaryCard,
   SummaryCardIcon,
   SummaryCardTitle,
   SummaryCardValue,

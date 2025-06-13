@@ -4,7 +4,6 @@ import "server-only";
 import { ProductStatusDto } from "../products/getProducts";
 
 interface DashboardDto {
-  todayRevenue: number;
   totalSales: number;
   totalStock: number;
   totalProducts: number;
@@ -54,12 +53,6 @@ WHERE "Sale"."date" >= $1 AND "Sale"."date" <= $2
   }
   console.log("[getDashboard] totalLast14DaysRevenue:", totalLast14DaysRevenue);
 
-  const todayRevenueQuery = `
-    SELECT SUM("unitPrice" * quantity) as "todayRevenue"
-    FROM sale_products
-        WHERE "createdAt" >= CURRENT_DATE AND "createdAt" < CURRENT_DATE + INTERVAL '1 day'
-  `;
-
   const mostSoldProductsQuery = `
   SELECT "products"."name", SUM("sale_products"."quantity") as "totalSold", "products"."price", "products"."stock", "products"."id" as "productId"
 FROM "sale_products"
@@ -79,15 +72,6 @@ LIMIT 5
     }[]
   >(mostSoldProductsQuery);
 
-  const startOfDay = new Date(new Date().setHours(0, 0, 0, 0));
-  const endOfDay = new Date(new Date().setHours(23, 59, 59, 999));
-
-  const todayRevenuePromise = db.$queryRawUnsafe<{ todayRevenue: number }[]>(
-    todayRevenueQuery,
-    startOfDay,
-    endOfDay,
-  );
-
   const totalSalesPromise = db.sale.count();
   const totalStockPromise = db.product.aggregate({
     _sum: {
@@ -95,21 +79,14 @@ LIMIT 5
     },
   });
   const totalProductsPromise = db.product.count();
-  const [
-    todayRevenue,
-    totalSales,
-    totalStock,
-    totalProducts,
-    mostSoldProducts,
-  ] = await Promise.all([
-    todayRevenuePromise,
-    totalSalesPromise,
-    totalStockPromise,
-    totalProductsPromise,
-    mostSoldProductsPromise,
-  ]);
+  const [totalSales, totalStock, totalProducts, mostSoldProducts] =
+    await Promise.all([
+      totalSalesPromise,
+      totalStockPromise,
+      totalProductsPromise,
+      mostSoldProductsPromise,
+    ]);
   return {
-    todayRevenue: todayRevenue[0].todayRevenue,
     totalSales,
     totalStock: Number(totalStock._sum.stock),
     totalProducts,
