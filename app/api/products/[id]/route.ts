@@ -1,9 +1,11 @@
 import { db } from "@/app/_lib/prisma";
+import { NextRequest } from "next/server";
+
 export async function GET(
-  request: Request,
-  context: { params: { id: string } }, // Alterado aqui
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = context.params; // E aqui
+  const { id } = await params;
 
   const product = await db.product.findUnique({
     where: { id },
@@ -22,10 +24,10 @@ export async function GET(
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } },
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await db.product.delete({
