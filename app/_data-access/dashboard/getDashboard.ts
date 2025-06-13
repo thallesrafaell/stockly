@@ -1,12 +1,6 @@
 import "server-only";
 import { ProductStatusDto } from "../products/getProducts";
 
-interface DashboardDto {
-  totalProducts: number;
-  totalLast14DaysRevenue?: DayTotalRevenue[];
-  mostSoldProducts?: MostSoldProductDto[];
-}
-
 export interface MostSoldProductDto {
   productId: string;
   name: string;
